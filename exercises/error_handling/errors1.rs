@@ -9,14 +9,37 @@
 // Execute `rustlings hint errors1` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
 
-pub fn generate_nametag_text(name: String) -> Option<String> {
+use std::error::Error;
+use std::fmt;
+
+#[derive(Debug,PartialEq)]
+enum NametagError {
+    EmptyName,
+}
+
+impl fmt::Display for NametagError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            NametagError::EmptyName => write!(f, "`name` was empty; it must be nonempty."),
+        }
+    }
+}
+impl From<&str> for NametagError {
+    fn from(s: &str) -> Self {
+        match s {
+            "`name` was empty; it must be nonempty." => NametagError::EmptyName,
+            _ => panic!("Unknown error message: {}", s),
+        }
+    }
+}
+impl std::error::Error for NametagError {}
+pub fn generate_nametag_text(name: String) -> Result<String,NametagError> {
     if name.is_empty() {
         // Empty names aren't allowed.
-        None
+        Err(NametagError::EmptyName)
     } else {
-        Some(format!("Hi! My name is {}", name))
+        Ok(format!("Hi! My name is {}", name))
     }
 }
 

@@ -16,18 +16,37 @@
 //
 // Execute `rustlings hint quiz3` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
-
+pub enum ReportType {
+    ALPHABETICAL,
+    NUMERICALLY
+}
 pub struct ReportCard {
     pub grade: f32,
     pub student_name: String,
     pub student_age: u8,
+    pub report_type: ReportType,
 }
 
 impl ReportCard {
     pub fn print(&self) -> String {
-        format!("{} ({}) - achieved a grade of {}",
-            &self.student_name, &self.student_age, &self.grade)
+        match self.report_type {
+            ReportType::ALPHABETICAL => {
+                match self.grade {
+                    2.1 => {
+                        format!("{} ({}) - achieved a grade of {}",
+                                &self.student_name, &self.student_age, "A+")
+                    }
+                    _ => {
+                        format!("{} ({}) - achieved a grade of {}",
+                                &self.student_name, &self.student_age, &self.grade)
+                    } }
+            }
+            ReportType::NUMERICALLY => {
+                format!("{} ({}) - achieved a grade of {}",
+                        &self.student_name, &self.student_age, &self.grade)
+            }
+        }
+
     }
 }
 
@@ -41,6 +60,7 @@ mod tests {
             grade: 2.1,
             student_name: "Tom Wriggle".to_string(),
             student_age: 12,
+            report_type: ReportType::NUMERICALLY,
         };
         assert_eq!(
             report_card.print(),
@@ -55,6 +75,7 @@ mod tests {
             grade: 2.1,
             student_name: "Gary Plotter".to_string(),
             student_age: 11,
+            report_type: ReportType::ALPHABETICAL,
         };
         assert_eq!(
             report_card.print(),

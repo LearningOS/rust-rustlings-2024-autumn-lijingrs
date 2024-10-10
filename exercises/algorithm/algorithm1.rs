@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -29,13 +28,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T> Default for LinkedList<T> where T: PartialOrd + Clone{
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T> LinkedList<T> where T: PartialOrd + Clone{
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -71,12 +70,33 @@ impl<T> LinkedList<T> {
     }
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+		let mut merge_list = LinkedList::<T>::new();
+        let mut current_a = list_a.start;
+        let mut current_b = list_b.start;
+        while current_a.is_some() && current_b.is_some(){
+            let val_a = unsafe {(*current_a.unwrap().as_ptr()).val.clone()};
+            let val_b = unsafe {(*current_b.unwrap().as_ptr()).val.clone()};
+            if val_a <= val_b{
+                let node:Box<Node<T>> = unsafe {Box::from_raw(current_a.unwrap().as_ptr())};
+                merge_list.add(node.val);
+                current_a = node.next;
+            }else{
+                let node:Box<Node<T>> = unsafe {Box::from_raw(current_b.unwrap().as_ptr())};
+                merge_list.add(node.val);
+                current_b = node.next;
+            }
         }
+        while let Some(current_ptr) = current_a{
+            let node:Box<Node<T>> = unsafe {Box::from_raw(current_a.unwrap().as_ptr())};
+            merge_list.add(node.val);
+            current_a = node.next;
+        }
+        while let Some(current_ptr) = current_b{
+            let node:Box<Node<T>> = unsafe {Box::from_raw(current_b.unwrap().as_ptr())};
+            merge_list.add(node.val);
+            current_b = node.next;
+        }
+        merge_list
 	}
 }
 

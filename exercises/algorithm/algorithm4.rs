@@ -3,7 +3,6 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -50,13 +49,18 @@ where
 
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
-        //TODO
+        match &mut self.root {
+            Some(root_node) => root_node.insert(value),
+            None => self.root = Some(Box::new(TreeNode::new(value))),
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
-        //TODO
-        true
+        match &self.root {
+            Some(root_node) => root_node.search(&value),
+            None => false,
+        }
     }
 }
 
@@ -66,7 +70,34 @@ where
 {
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
-        //TODO
+        match self.value.cmp(&value) {
+            Ordering::Less => {
+                match self.right {
+                    Some(ref mut right_node) => right_node.insert(value),
+                    None => self.right = Some(Box::new(TreeNode::new(value))),
+                }
+            }
+            Ordering::Greater => {
+                match self.left {
+                    Some(ref mut left_node) => left_node.insert(value),
+                    None => self.left = Some(Box::new(TreeNode::new(value))),
+                }
+            }
+            Ordering::Equal => {} // Do nothing if the value is already present
+        }
+    }
+    fn search(&self, value: &T) -> bool {
+        match self.value.cmp(value) {
+            std::cmp::Ordering::Equal => true,
+            std::cmp::Ordering::Greater => match &self.left {
+                Some(left_node) => left_node.search(value),
+                None => false,
+            },
+            std::cmp::Ordering::Less => match &self.right {
+                Some(right_node) => right_node.search(value),
+                None => false,
+            },
+        }
     }
 }
 
